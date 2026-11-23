@@ -33,8 +33,6 @@ sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
 # (the nodejs package in apt is often too old)
 ```
 
-Prefer installers? Download them from https://dotnet.microsoft.com/download/dotnet/10.0 and https://nodejs.org.
-
 Check that both work (open a new terminal first):
 ```bash
 dotnet --version   # should print 10.0.x
