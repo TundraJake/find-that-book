@@ -1,0 +1,6 @@
+# Test-only analyzer settings (inherits the repository .editorconfig).
+[*.cs]
+# Test names use Method_Scenario_Expected, which needs underscores.
+dotnet_diagnostic.CA1707.severity = none
+# Inline expected-value arrays are clearer than static fields in assertions.
+dotnet_diagnostic.CA1861.severity = none

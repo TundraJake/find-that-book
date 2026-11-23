@@ -1,0 +1,31 @@
+# DigitalOcean App Platform spec — one template for staging and production.
+# ${...} values are substituted by digitalocean/app_action/deploy from the workflow environment.
+# DNS lives in Cloudflare (not DigitalOcean DNS), so no `zone` is set on the domain.
+name: ${APP_NAME}
+region: nyc
+services:
+  - name: web
+    image:
+      registry_type: DOCR
+      registry: ${DIGITALOCEAN_REGISTRY}
+      repository: find-that-book
+      tag: ${IMAGE_TAG}
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    health_check:
+      http_path: /api/health
+    envs:
+      - key: ASPNETCORE_ENVIRONMENT
+        scope: RUN_TIME
+        value: ${ASPNETCORE_ENVIRONMENT}
+      - key: SearchAudit__TrustProxyHeaders
+        scope: RUN_TIME
+        value: "true"
+      - key: Gemini__ApiKey
+        scope: RUN_TIME
+        type: SECRET
+        value: ${GEMINI_API_KEY}
+domains:
+  - domain: ${APP_DOMAIN}
+    type: PRIMARY

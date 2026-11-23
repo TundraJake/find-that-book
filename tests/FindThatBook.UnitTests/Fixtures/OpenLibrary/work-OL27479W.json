@@ -1,0 +1,20 @@
+{
+  "key": "/works/OL27479W",
+  "title": "The Two Towers",
+  "type": {
+    "key": "/type/work"
+  },
+  "authors": [
+    {
+      "author": {
+        "key": "/authors/OL26320A"
+      },
+      "type": {
+        "key": "/type/author_role"
+      }
+    }
+  ],
+  "covers": [
+    14627564
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "role": "model",
+        "parts": [
+          {
+            "text": "{\"explanations\": [{\"id\": \"/works/OL262758W\", \"explanation\": \"Exact title match; Tolkien is primary author; Dixon listed as contributor. First published 1937, matching the query year.\", \"rank\": 1}, {\"id\": \"/works/OL27448W\", \"explanation\": \"Matches the queried author: Tolkien is primary author of this 1954 work.\", \"rank\": 2}]}"
+          }
+        ]
+      },
+      "finishReason": "STOP"
+    }
+  ]
+}

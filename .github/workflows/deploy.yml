@@ -1,0 +1,77 @@
+name: Deploy
+
+# dev  -> staging    (findthatbook-dev.explorator-maris.com)
+# main -> production (findthatbook.explorator-maris.com)
+on:
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+
+  deploy:
+    name: Deploy to DigitalOcean
+    needs: ci
+    # Scaffold guard: stays skipped until the repo variable DEPLOY_ENABLED is set to "true" (see docs/DEPLOYMENT.md).
+    if: vars.DEPLOY_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    env:
+      APP_NAME: ${{ vars.APP_NAME }}
+      APP_DOMAIN: ${{ vars.APP_DOMAIN }}
+      ASPNETCORE_ENVIRONMENT: ${{ vars.ASPNETCORE_ENVIRONMENT }}
+      DIGITALOCEAN_REGISTRY: ${{ vars.DIGITALOCEAN_REGISTRY }}
+      IMAGE_REPOSITORY: registry.digitalocean.com/${{ vars.DIGITALOCEAN_REGISTRY }}/find-that-book
+      IMAGE_TAG: ${{ github.ref_name }}-${{ github.sha }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 1200
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_REPOSITORY }}:${{ env.IMAGE_TAG }}
+            ${{ env.IMAGE_REPOSITORY }}:${{ github.ref_name }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy App Platform spec
+        uses: digitalocean/app_action/deploy@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          app_spec_location: .do/app.yaml
+
+      - name: Purge Cloudflare cache
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: |
+          curl --fail --silent --show-error -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            --data "{\"hosts\":[\"${APP_DOMAIN}\"]}"
+
+      - name: Smoke test
+        run: curl --fail --silent --show-error --retry 10 --retry-delay 15 --retry-all-errors "https://${APP_DOMAIN}/api/health"

@@ -1,0 +1,21 @@
+{
+  "key": "/works/OL27513W",
+  "title": "The Fellowship of the Ring",
+  "type": {
+    "key": "/type/work"
+  },
+  "authors": [
+    {
+      "author": {
+        "key": "/authors/OL26320A"
+      },
+      "type": {
+        "key": "/type/author_role"
+      }
+    }
+  ],
+  "covers": [
+    14627060,
+    -1
+  ]
+}

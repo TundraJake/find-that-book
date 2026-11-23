@@ -1,0 +1,9 @@
+{
+  "key": "/works/OL27482W",
+  "title": "The Hobbit",
+  "type": "/type/work",
+  "authors": [
+    { "author": "/authors/OL26320A", "type": "/type/author_role" }
+  ],
+  "covers": [14627509]
+}

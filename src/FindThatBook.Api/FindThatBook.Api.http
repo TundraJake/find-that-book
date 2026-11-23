@@ -1,0 +1,57 @@
+@host = http://localhost:5080
+
+GET {{host}}/api/health
+
+###
+
+POST {{host}}/api/books/search
+Content-Type: application/json
+
+{ "query": "tolkien hobbit illustrated deluxe 1937" }
+
+###
+
+POST {{host}}/api/books/search
+Content-Type: application/json
+
+{ "query": "mark huckleberry" }
+
+###
+
+# Validation error (empty query) -> 400
+POST {{host}}/api/books/search
+Content-Type: application/json
+
+{ "query": "" }
+
+###
+
+# Gemini extraction only (Development environment)
+POST {{host}}/api/diagnostics/extract
+Content-Type: application/json
+
+{ "query": "tolkien hobbit illustrated deluxe 1937" }
+
+###
+
+# Configuration status: ready=false (gemini_configured=false) when the Gemini key is missing
+GET {{host}}/api/status
+
+###
+
+# Gemini explanations for hand-supplied candidates (Development environment)
+POST {{host}}/api/diagnostics/explain
+Content-Type: application/json
+
+{
+  "query": "tolkien hobbit illustrated deluxe 1937",
+  "candidates": [
+    { "work_key": "/works/OL262758W", "title": "The Hobbit", "primary_authors": ["J.R.R. Tolkien"], "contributors": ["Charles Dixon", "David Wenzel"], "first_publish_year": 1937, "match_tier": "exact_title_primary_author" },
+    { "work_key": "/works/OL27448W", "title": "The Lord of the Rings", "primary_authors": ["J.R.R. Tolkien"], "first_publish_year": 1954, "match_tier": "author_only" }
+  ]
+}
+
+###
+
+# Gemini requests in the last 60 seconds vs the configured per-minute limit
+GET {{host}}/api/usage

@@ -1,0 +1,14 @@
+{
+  "candidates": [
+    {
+      "content": {
+        "role": "model",
+        "parts": [
+          { "text": "{\"title\":\"The Hobbit\",\"author\":\"J.R.R. Tolkien\",\"keywords\":[\"illustrated\",\"deluxe\"],\"characterHints\":[],\"yearHint\":1937}" }
+        ]
+      },
+      "finishReason": "STOP"
+    }
+  ],
+  "usageMetadata": { "promptTokenCount": 180, "candidatesTokenCount": 40 }
+}
