@@ -1,7 +1,5 @@
 # Find That Book
 
-> Status: scaffolded. Sections below marked TODO get filled in as the build progresses.
-
 ## Stack
 - **API:** ASP.NET Core on .NET 10 (.NET 8 was requested; .NET 10 is the current LTS and fully backward compatible with the requested design).
 - **Client:** React 19 + TypeScript + Vite.
