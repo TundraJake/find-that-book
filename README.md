@@ -10,24 +10,65 @@
 The sections below follow the project's requirements, in order.
 
 ### Setup and running instructions
-Prerequisites: .NET 10 SDK, Node 20+, a Gemini API key (https://ai.google.dev/gemini-api/docs/api-key).
 
+#### Prerequisites
+You need two tools: the **.NET 10 SDK** (runs the API) and **Node.js 22.12 or newer** (runs the web app; the current LTS is recommended). You also need a free **Gemini API key** from https://ai.google.dev/gemini-api/docs/api-key.
+
+**Windows** (PowerShell):
+```powershell
+winget install Microsoft.DotNet.SDK.10
+winget install OpenJS.NodeJS.LTS
+```
+
+**macOS** (Homebrew):
+```bash
+brew install dotnet-sdk
+brew install node
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt-get update && sudo apt-get install -y dotnet-sdk-10.0
+# Node.js: use the LTS installer from https://nodejs.org or a version manager such as nvm
+# (the nodejs package in apt is often too old)
+```
+
+Prefer installers? Download them from https://dotnet.microsoft.com/download/dotnet/10.0 and https://nodejs.org.
+
+Check that both work (open a new terminal first):
+```bash
+dotnet --version   # should print 10.0.x
+node --version     # should print v22.12 or newer
+```
+
+#### Get the code
+```bash
+git clone https://github.com/TundraJake/find-that-book.git
+cd find-that-book
+```
+
+#### Run it
 The app runs as two processes, so use **two terminals**, each starting from the repo root: one for the API, one for the web app. Keep both running.
 
 **Terminal 1, API:**
 ```bash
 cd src/FindThatBook.Api
-dotnet user-secrets init
 dotnet user-secrets set "Gemini:ApiKey" "<your-key>"
-dotnet run                     # http://localhost:5080
+dotnet run                     # API on http://localhost:5080
 ```
 
-**Terminal 2, web app (open http://localhost:5173):**
+**Terminal 2, web app:**
 ```bash
 cd client
 npm install
-npm run dev                    # http://localhost:5173
+npm run dev                    # open http://localhost:5173
 ```
+
+Without a Gemini key the API still starts; the page shows search as disabled, with the command to fix it.
+
+#### Troubleshooting
+- **Vite says Node.js is too old:** install Node.js 22.12 or newer (see Prerequisites), open a new terminal, and run `npm install` again.
+- **The page says "Cannot reach the API":** make sure Terminal 1 is still running `dotnet run` on port 5080.
 
 ### Overview of the implementation
 ![Architecture: React client, Api, Application, Domain, and Infrastructure adapters for Gemini, Open Library, and the audit log](docs/architecture.png)
