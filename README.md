@@ -171,9 +171,10 @@ Without a Gemini key the API still starts; the page shows search as disabled, wi
 - **Search audit log:** every search written to a daily JSON Lines file and the app log, with time, client IP, approximate location (from Cloudflare headers when deployed, otherwise "Not available"), query, outcome, result count, top result, and duration.
 
 ### Testing strategy
-- **Unit tests:** 135 xUnit tests (`tests/FindThatBook.UnitTests`) that need no network and no API key. They cover the ranking rules and tie-breakers, text normalization, title and author matching, Gemini request building and strict response validation, safety and explanation checks, quota fallback and high-demand retries, Open Library parsing and timeout handling, and the search audit log.
+- **Unit tests:** 135 xUnit tests (`tests/FindThatBook.UnitTests`) that need no network and no API key. They are mainly functional tests that confirm each piece works as intended: the ranking rules and tie-breakers, text normalization, title and author matching, Gemini request building and strict response validation, safety and explanation checks, quota fallback and high-demand retries, Open Library parsing and timeout handling, and the search audit log.
 - **Real captured responses:** Open Library and Gemini behavior is tested against saved real responses (`tests/FindThatBook.UnitTests/Fixtures/`), including the data quirks that matter here: merged-work redirects, contributors mixed into `author_name`, and the graphic-novel Hobbit.
-<!-- Add manual and verbal testing notes here. -->
+- **Manual testing:** most end-to-end testing was done by hand in the running app, using real books: author names only, titles only, titles with authors, misspellings, character names, and publication years (the example queries on the search page cover these cases).
+- **Next step:** a fuller automated test suite that runs real searches end to end against Gemini and Open Library. I held back on this for now because the Gemini free tier has daily and per-minute request limits, and I didn't want automated runs to use up the requests I needed to build and demo the project.
 
 ### Future improvements
 - **Genre and fiction / nonfiction filters:** let the reader narrow a search by genre and by fiction or nonfiction, using Gemini to read those hints from the query and Open Library subjects to filter and rank candidates, for a much more focused search.
